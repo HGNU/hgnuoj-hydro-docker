@@ -30,6 +30,7 @@ services:
       - ./data/backend/config:/root/.hydro
       - ./data/backend/addon:/root/addon
       - ./backend-dev/Hydro-master:/root/Hydro-dev
+        #entrypoint: /bin/bash -c "cd /root/Hydro-dev && yarn"
     environment:
       - ACCESS_KEY=CHANGE_THIS
       - SECRET_KEY=CHANGE_THIS
@@ -41,12 +42,13 @@ services:
     restart: always
     privileged: true
     deploy:
-      replicas: 2
+      replicas: 8
       resources:
         limits:
-           memory: 2G
+           memory: 4G
+           cpus: "2.5"
         reservations:
-           memory: 128M
+           memory: 512M
     depends_on:
       - oj-backend
     volumes:
