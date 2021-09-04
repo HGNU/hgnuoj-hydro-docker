@@ -23,12 +23,11 @@ if [ ! -f "$ROOT/first" ]; then
     hydrooj cli user setSuperAdmin 2
 fi
 cd "$ROOT/../Hydro-dev"
+rm -f /tmp/hydro/lock.json
+mkdir -p /tmp/hydro/public   
 echo Running in Dev mode.
-#yarn install
-#yarn build
-#yarn build:ui:production
 
 /bin/bash /root/watch-compile.sh &
 
-yarn debug --port=8888
+yarn debug --port=2333
 #pm2-runtime start yarn -- debug --port=80

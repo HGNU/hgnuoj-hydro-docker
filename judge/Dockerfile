@@ -20,12 +20,13 @@ RUN apt-get -qq update && \
     mono-runtime \
     mono-mcs
 
+RUN yarn global add pm2 @hydrooj/hydrojudge && \
+    wget https://s3.undefined.moe/file/executor-amd64 -O /usr/bin/sandbox && \
+    chmod +x /usr/bin/sandbox
+
 ADD ./entrypoint.sh /root/entrypoint.sh
 ADD ./judge.yaml /root/judge.yaml
 RUN chmod +x /root/entrypoint.sh
 
-RUN yarn global add pm2 @hydrooj/hydrojudge && \
-    wget https://s3.undefined.moe/file/executor-amd64 -O /usr/bin/sandbox && \
-    chmod +x /usr/bin/sandbox
 
 ENTRYPOINT /root/entrypoint.sh

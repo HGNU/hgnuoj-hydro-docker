@@ -18,6 +18,8 @@ services:
     restart: always
     volumes:
       - ./data/mongo:/data/db
+    ports:
+      - "27017:27017"
 
   oj-backend:
     build: ./backend-dev
@@ -29,13 +31,13 @@ services:
     volumes:
       - ./data/backend/config:/root/.hydro
       - ./data/backend/addon:/root/addon
-      - ./backend-dev/Hydro-master:/root/Hydro-dev
+      - ./backend-dev/hgnuoj-hydro:/root/Hydro-dev
         #entrypoint: /bin/bash -c "cd /root/Hydro-dev && yarn"
     environment:
       - ACCESS_KEY=CHANGE_THIS
       - SECRET_KEY=CHANGE_THIS
     ports:
-      - "0.0.0.0:80:8888"
+      - "0.0.0.0:80:8000"
 
   oj-judge:
     build: ./judge
@@ -45,11 +47,11 @@ services:
       replicas: 8
       resources:
         limits:
-           memory: 4G
-           cpus: "2.5"
-        reservations:
-           memory: 512M
+                #memory: 4G
+           cpus: "5"
+           #reservations:
+                #memory: 2G
     depends_on:
       - oj-backend
-    volumes:
-      - ./data/judge/config:/root/.config/hydro
+        #volumes:
+        #- ./data/judge/config:/root/.config/hydro
