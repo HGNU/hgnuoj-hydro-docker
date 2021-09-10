@@ -12,6 +12,6 @@ healthcheck_path=/root/healthcheck.sh
 echo starting compiling files...
 #sleep 10
 #yarn build:watch & # 编译后端
-yarn build:ui:dev & # 编译前端
+yarn build:ui:dev # 编译前端
 
 

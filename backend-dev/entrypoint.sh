@@ -3,6 +3,8 @@
 ROOT=/root/.hydro
 mkdir -p $ROOT
 
+cd "$ROOT/../Hydro-dev"
+
 if [ ! -f "$ROOT/addon.json" ]; then
     echo '["@hydrooj/ui-default"]' > "$ROOT/addon.json"
 fi
@@ -14,20 +16,20 @@ fi
 
 if [ ! -f "$ROOT/first" ]; then
     echo "for marking use only!" > "$ROOT/first"
-	hydrooj cli system set file.accessKey "$ACCESS_KEY"
-    hydrooj cli system set file.secretKey "$SECRET_KEY"
+    npx hydrooj cli system set file.accessKey "$ACCESS_KEY"
+    npx hydrooj cli system set file.secretKey "$SECRET_KEY"
     # TODO 变成变量
-    hydrooj cli system set file.endPoint http://oj-minio:9000/
+    npx hydrooj cli system set file.endPoint http://oj-minio:9000/
+	
+    npx hydrooj cli user create systemjudge@systemjudge.local judger judgerjudger 2
+    npx hydrooj cli user setJudge 2
 
-    hydrooj cli user create systemjudge@systemjudge.local root rootroot
-    hydrooj cli user setSuperAdmin 2
 fi
-cd "$ROOT/../Hydro-dev"
 rm -f /tmp/hydro/lock.json
 mkdir -p /tmp/hydro/public   
 echo Running in Dev mode.
 
-/bin/bash /root/watch-compile.sh &
+pm2 start /root/watch-compile.sh --interpreter bash
 
-yarn debug --port=2333
-#pm2-runtime start yarn -- debug --port=80
+pm2 start packages/hydrooj/bin/hydrooj.js -i 8 --name hydrooj --node-args="--async-stack-traces --trace-deprecation" -- --debug --template
+pm2 logs

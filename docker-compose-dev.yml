@@ -4,10 +4,12 @@ services:
   oj-minio:
     image: minio/minio
     container_name: oj-minio
-    command: server /data
+    command: server /data -console-address ":9001"
     restart: always
     volumes:
       - ./data/minio:/data
+    ports:
+      - "9001:9001"
     environment:
       - MINIO_ACCESS_KEY=CHANGE_THIS
       - MINIO_SECRET_KEY=CHANGE_THIS
@@ -25,6 +27,7 @@ services:
     build: ./backend-dev
     container_name: oj-backend
     restart: always
+    privileged: true
     depends_on:
       - oj-minio
       - oj-mongo
@@ -36,8 +39,22 @@ services:
     environment:
       - ACCESS_KEY=CHANGE_THIS
       - SECRET_KEY=CHANGE_THIS
-    ports:
-      - "0.0.0.0:80:8000"
+
+  oj-nginx:
+     build: ./nginx
+     container_name: oj-nginx
+     restart: always
+     ports:
+      - "0.0.0.0:80:80"
+     depends_on:
+      - oj-backend
+
+  oj-sonic:
+    image: valeriansaliou/sonic:v1.3.0
+    container_name: oj-sonic
+    volumes:
+      - ./sonic/config.cfg:/etc/sonic.cfg
+      - ./data/sonic/store/:/var/lib/sonic/store/
 
   oj-judge:
     build: ./judge
@@ -47,11 +64,9 @@ services:
       replicas: 8
       resources:
         limits:
-                #memory: 4G
+           memory: 4G
            cpus: "5"
-           #reservations:
-                #memory: 2G
+        reservations:
+           memory: 1G
     depends_on:
       - oj-backend
-        #volumes:
-        #- ./data/judge/config:/root/.config/hydro
