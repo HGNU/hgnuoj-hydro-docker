@@ -39,6 +39,8 @@ services:
     environment:
       - ACCESS_KEY=CHANGE_THIS
       - SECRET_KEY=CHANGE_THIS
+    ports:
+      - "9209:9209"
 
   oj-nginx:
      build: ./nginx
@@ -68,5 +70,7 @@ services:
            cpus: "5"
         reservations:
            memory: 1G
+    volumes:
+      - ./backend-dev/hgnuoj-hydro:/root/hydro-dev
     depends_on:
       - oj-backend
