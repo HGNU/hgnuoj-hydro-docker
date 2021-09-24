@@ -11,9 +11,21 @@ function restart-backend(){
 	sudo docker exec -it $container_name pm2 restart hydrooj
 	echo 重启完毕.
 }
+function stop-backend(){
+	echo 停止OJ后端...
+	sudo docker stop oj-backend
+}
+function start-backend(){
+        echo 启动OJ后端...
+        sudo docker start oj-backend
+}
 function restart-backend-docker(){
 	echo 重启OJ后端Docker容器...
 	sudo docker restart $container_name
+}
+function restart-judge(){
+	echo 重启评测机...
+	sudo docker-compose -f $compose_file --compatibility restart oj-judge
 }
 function restart-docker(){
 	echo 重启docker-compose...
@@ -29,6 +41,11 @@ function hydro-cli(){
 	args=$@
 	echo 执行Hydro-cli命令: "$args"
 	sudo docker exec -it $container_name sh -c "cd /root/Hydro-dev; npx hydrooj cli $args"
+}
+function hydro-addon(){
+        args=$@
+        echo 执行Hydro-addon命令: "$args"
+        sudo docker exec -it $container_name sh -c "cd /root/Hydro-dev; npx hydrooj addon $args"
 }
 function logs-backend(){
 	echo 显示后端日志："$@"
@@ -97,7 +114,23 @@ function backup-all(){
 }
 function backup-prune(){
 	echo 清理过期备份...
-} 
+}
+function backup-restore-mongo(){
+	echo 恢复数据库:$@...
+	filename=${@##*/}
+	sudo docker cp $@ oj-mongo:/tmp
+	sudo docker exec -it oj-mongo tar xvf /tmp/$filename
+	stop-backend
+	sudo docker exec -it oj-mongo sh -c "echo 'db.dropDatabase()' | mongo hydro"
+	dirname=${filename%%.*}
+	dirname=${dirname##*hgnuoj-}
+	sudo docker exec -it oj-mongo sh -c "cd /tmp/$dirname ; mongorestore ."
+	start-backend
+}
+function sh-backend(){
+	echo 进入后端容器:
+	sudo docker exec -it -w /root oj-backend bash
+}
 args=''
 index=0
 for arg in "$@"
@@ -120,6 +153,12 @@ case "$1" in
 	hydro-cli)
 		hydro-cli $args
 	;;
+	hydro-addon)
+                hydro-addon $args
+        ;;
+	sh-backend)
+                sh-backend
+        ;;
 	logs-backend)
 		logs-backend $args
 	;;
@@ -135,6 +174,9 @@ case "$1" in
 	restart-docker)
 		restart-docker
 	;;
+	restart-judge)
+                restart-judge
+        ;;
 	compose-up-build)
                 compose-up-build
         ;;
@@ -155,6 +197,9 @@ case "$1" in
         ;;
 	backup-prune)
                 backup-prune
+        ;;
+	backup-restore-mongo)
+                backup-restore-mongo $args
         ;;
 	*)
 		echo 子命令无效！

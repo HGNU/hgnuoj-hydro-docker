@@ -6,9 +6,9 @@ hosts:
     password: judgerjudger # 评测账号密码
     detail: true # 默认为 true
 total_time_limit: 2000
-parallelism: 4
+parallelism: 2
 testcases_max: 200
 memoryMax: 4096m
-rate: 3
+rate: 4
 rerun: 2
 retry_delay_sec: 15

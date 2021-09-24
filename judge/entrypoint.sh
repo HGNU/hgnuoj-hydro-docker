@@ -7,4 +7,6 @@ if [ ! -f "$ROOT/judge.yaml" ]; then
 fi
 ulimit -s unlimited
 pm2 start sandbox
-pm2-runtime start hydrojudge
+cd /root/hydro-dev
+yarn
+pm2-runtime start ./packages/hydrojudge/bin/hydrojudge.js

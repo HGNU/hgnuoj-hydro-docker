@@ -31,5 +31,5 @@ echo Running in Dev mode.
 
 pm2 start /root/watch-compile.sh --interpreter bash
 
-pm2 start packages/hydrooj/bin/hydrooj.js -i 8 --name hydrooj --restart-delay=500 --node-args="--async-stack-traces --trace-deprecation" -- --debug --template
+pm2 start packages/hydrooj/bin/hydrooj.js -i 8 --name hydrooj --restart-delay=2000 --node-args="--async-stack-traces --trace-deprecation" -- --debug --template --benchmark
 pm2 logs

@@ -40,7 +40,7 @@ services:
       - ACCESS_KEY=CHANGE_THIS
       - SECRET_KEY=CHANGE_THIS
     ports:
-      - "9209:9209"
+      - "3000:3000"
 
   oj-nginx:
      build: ./nginx
