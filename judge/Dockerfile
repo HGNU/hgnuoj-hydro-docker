@@ -39,4 +39,4 @@ ADD ./judge.yaml /root/judge.yaml
 RUN chmod +x /root/entrypoint.sh
 
 
-ENTRYPOINT /root/entrypoint.sh
+ENTRYPOINT ["/root/entrypoint.sh"]

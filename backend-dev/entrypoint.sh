@@ -1,5 +1,6 @@
 #!/bin/sh
 
+
 ROOT=/root/.hydro
 mkdir -p $ROOT
 
@@ -29,7 +30,10 @@ rm -f /tmp/hydro/lock.json
 mkdir -p /tmp/hydro/public   
 echo Running in Dev mode.
 
-pm2 start /root/watch-compile.sh --interpreter bash
+trap "echo 'received stop signal'; exit 0" TERM
 
+pm2 start /root/watch-compile.sh --interpreter bash
 pm2 start packages/hydrooj/bin/hydrooj.js -i 8 --name hydrooj --restart-delay=2000 --node-args="--async-stack-traces --trace-deprecation" -- --debug --template --benchmark
-pm2 logs
+pm2 logs &
+
+wait
